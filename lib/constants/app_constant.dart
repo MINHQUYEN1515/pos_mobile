@@ -5,4 +5,6 @@ class AppConstant {
   static const String TABLE_ALL = 'all';
   static const String TRONG_NHA = 'trongnha';
   static const String NGOAI_NHA = 'ngoainha';
+  static const String THUC_AN = 'thucan';
+  static const String NUOC = 'nuoc';
 }

@@ -5,6 +5,8 @@ import 'package:mobile/network/api_util.dart';
 import 'package:mobile/repo/auth_repo.dart';
 
 import 'page/login/login_page.dart';
+import 'repo/order_temp_repo.dart';
+import 'repo/product_repo.dart';
 import 'repo/table_repo.dart';
 
 class App extends StatefulWidget {
@@ -48,9 +50,12 @@ class _AppState extends State<App> {
         RepositoryProvider<ITableRepo>(create: (context) {
           return TableRepo(_apiClient!);
         }),
-        // RepositoryProvider<UserRepository>(create: (context) {
-        //   return UserRepositoryImpl(apiClient: _apiClient!);
-        // }),
+        RepositoryProvider<IOrderTempRepo>(create: (context) {
+          return OrderTempRepo(_apiClient!);
+        }),
+        RepositoryProvider<IProductRepo>(create: (context) {
+          return ProductRepo(_apiClient!);
+        }),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

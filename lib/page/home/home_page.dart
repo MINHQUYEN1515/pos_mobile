@@ -4,8 +4,11 @@ import 'package:mobile/constants/app_constant.dart';
 import 'package:mobile/extension/number_extension.dart';
 import 'package:mobile/model/entity/table_entity.dart';
 import 'package:mobile/page/home/home_state.dart';
+import 'package:mobile/page/login/login_page.dart';
 import 'package:mobile/repo/table_repo.dart';
+import 'package:mobile/utils/logger.dart';
 
+import '../table/table_page.dart';
 import 'home_cubit.dart';
 
 class HomePage extends StatelessWidget {
@@ -61,8 +64,17 @@ class _HomePageChildState extends State<HomePageChild> {
       height: 60,
       color: const Color(0xFF004D40),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (_) => LoginScreen()));
+              },
+              icon: Icon(
+                Icons.logout,
+                color: Colors.white,
+              )),
           Container(
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -134,62 +146,93 @@ class _HomePageChildState extends State<HomePageChild> {
         break;
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: borderColor, width: 1),
-        borderRadius: BorderRadius.circular(4),
-        color: backgroundColor,
-      ),
-      child: Column(
-        children: [
-          // Price at the top
-          if (table.amount != 0)
-            Align(
-              alignment: Alignment.topRight,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+    return InkWell(
+      onTap: () {
+        if (table.userName != _cubit.state.username &&
+            (table.userName != null && table.userName != "")) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("thông báo"),
+                content:
+                    Text("Bạn không được phép vào bàn của ${table.userName}"),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => OrderScreen(
+                        table: table,
+                      )));
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: borderColor, width: 1),
+          borderRadius: BorderRadius.circular(4),
+          color: backgroundColor,
+        ),
+        child: Column(
+          children: [
+            // Price at the top
+            if (table.amount != 0)
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  child: Text(
+                    table.amount.formatMoney(),
+                    style: TextStyle(
+                      color: textColor.withOpacity(0.7),
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+
+            // Table number
+            Expanded(
+              child: Center(
                 child: Text(
-                  table.amount.formatMoney(),
+                  table.code.toString().padLeft(2, '0'),
                   style: TextStyle(
-                    color: textColor.withOpacity(0.7),
-                    fontSize: 12,
+                    color: textColor,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
 
-          // Table number
-          Expanded(
-            child: Center(
-              child: Text(
-                table.code.toString().padLeft(2, '0'),
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+            // Table icon
+
+            // Time and customer name
+            if (table.userName != '' && table.userName != null)
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  table.userName ?? "",
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ),
-          ),
 
-          // Table icon
-
-          // Time and customer name
-          if (table.userName != '' && table.userName != null)
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                table.userName ?? "",
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 12,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-
-          const SizedBox(height: 8),
-        ],
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

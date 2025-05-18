@@ -16,7 +16,7 @@ class ApiUtil {
   }
 
   static ApiClient get apiClient {
-    final apiClient = ApiClient(getDio(), baseUrl: "http://192.168.0.102:8080");
+    final apiClient = ApiClient(getDio(), baseUrl: "http://192.168.88.86:8080");
     return apiClient;
   }
 }
